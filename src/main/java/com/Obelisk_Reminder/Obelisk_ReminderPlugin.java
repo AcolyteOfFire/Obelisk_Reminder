@@ -11,6 +11,8 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
+import net.runelite.client.ui.overlay.OverlayManager;
+
 
 @Slf4j
 @PluginDescriptor(
@@ -23,6 +25,8 @@ public class Obelisk_ReminderPlugin extends Plugin
 
 	@Inject
 	private Obelisk_ReminderConfig config;
+
+	@Inject Obelisk_ReminderOverlay overlay;
 
 	@Override
 	protected void startUp() throws Exception

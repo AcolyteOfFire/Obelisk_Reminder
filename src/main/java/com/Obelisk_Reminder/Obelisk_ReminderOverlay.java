@@ -9,7 +9,10 @@ import javax.inject.Inject;
 import java.awt.*;
 
 
-public class Obelisk_ReminderOverlay {
+class Obelisk_ReminderOverlay extends OverlayPanel
+{
+    private final Client client;
+    private final Obelisk_ReminderConfig config;
     @Inject
     private Obelisk_ReminderOverlay(Client client, Obelisk_ReminderConfig config)
     {
@@ -20,7 +23,8 @@ public class Obelisk_ReminderOverlay {
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        panelComponent.getChildern().clear();
+        panelComponent.getChildren().clear();
+
 
     }
 }
