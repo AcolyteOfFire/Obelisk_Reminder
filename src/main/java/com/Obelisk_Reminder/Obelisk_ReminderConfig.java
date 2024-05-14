@@ -23,12 +23,13 @@ public interface Obelisk_ReminderConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "flashForCurrentObelisk",
-			name = "Flash for Current Obelisk",
+			keyName = "shouldFlash",
+			name = "Warning Flash",
 			description = "Whether or not the warning should flash if it is set to your current location",
 			position = 2
 	)
-	default boolean enableRanged() {return true;}
+	default boolean shouldFlash() {return true;}
+
 
 	@ConfigItem(
 			keyName = "flashAtWildernessLevel",

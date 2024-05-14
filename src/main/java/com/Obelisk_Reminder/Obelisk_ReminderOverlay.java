@@ -13,6 +13,7 @@ class Obelisk_ReminderOverlay extends OverlayPanel
 {
     private final Client client;
     private final Obelisk_ReminderConfig config;
+
     @Inject
     private Obelisk_ReminderOverlay(Client client, Obelisk_ReminderConfig config)
     {
@@ -25,6 +26,23 @@ class Obelisk_ReminderOverlay extends OverlayPanel
     {
         panelComponent.getChildren().clear();
 
+        if (config.shouldFlash())
+        {
+            if (client.getGameCycle() % 40 >= 20)
+            {
+                panelComponent.setBackgroundColor(config.flashColor1());
+            }
+            else
+            {
+                panelComponent.setBackgroundColor(config.flashColor2());
+            }
+        }
+        else
+        {
+            panelComponent.setBackgroundColor(config.flashColor1());
+        }
+        setPosition(OverlayPosition.BOTTOM_RIGHT);
+        return panelComponent.render(graphics);
 
     }
 }
