@@ -19,13 +19,13 @@ public interface Obelisk_ReminderConfig extends Config
 	)
 	default Color textBoxColor()
 	{
-		return new Color(50, 50, 50, 70);
+		return new Color(0, 0, 0, 70);
 	}
 
 	@ConfigItem(
 			keyName = "shouldFlash",
 			name = "Warning Flash",
-			description = "Whether or not the warning should flash if it is set to your current location",
+			description = "Whether or not the warning should flash if you are in range of the destination obelisk",
 			position = 2
 	)
 	default boolean shouldFlash() {return true;}
@@ -37,7 +37,13 @@ public interface Obelisk_ReminderConfig extends Config
 			description = "Minimum level of wilderness where obelisks should flash",
 			position = 3
 	)
-	default int flashAtWildernessLevel() {return 35;}
+	default int flashAtWildernessLevel() {return 27;}
+	@ConfigItem(
+			keyName = "obeliskDetectionRange",
+			description = "Displays obelisk information when obelisks are in this range",
+			name = "Obelisk Detection Range"
+	)
+	default int obeliskDetectionRange() {return 8;}
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor1",
@@ -47,7 +53,7 @@ public interface Obelisk_ReminderConfig extends Config
 	)
 	default Color flashColor1()
 	{
-		return new Color(0, 128, 255, 150);
+		return new Color(210, 0, 0, 255);
 	}
 
 	@Alpha
@@ -59,7 +65,7 @@ public interface Obelisk_ReminderConfig extends Config
 	)
 	default Color flashColor2()
 	{
-		return new Color(50, 50, 50, 150);
+		return new Color(150, 0, 0, 150);
 	}
 
 
