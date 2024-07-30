@@ -2,8 +2,6 @@ package com.Obelisk_Reminder;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
-import javax.print.attribute.standard.Destination;
-
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -11,16 +9,12 @@ import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.WidgetLoaded;
 import net.runelite.api.widgets.Widget;
 import java.awt.event.KeyEvent;
-import net.runelite.api.widgets.WidgetInfo;
-import net.runelite.api.widgets.WidgetUtil;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
-import net.runelite.client.plugins.achievementdiary.diaries.WildernessDiaryRequirement;
 import net.runelite.client.ui.overlay.OverlayManager;
 import java.util.HashMap;
 import java.util.Map;
@@ -186,11 +180,9 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 		Widget widget = client.getWidget(WILDERNESS_OBELISK_WIDGET_ID);
 		if(widget != null){
 			isWidgetOpen = true;
-			//debugText = "Widget: yes";
 		}
 		else{
 			isWidgetOpen = false;
-			//debugText = "Widget: no";
 		}
 
 	}
@@ -211,10 +203,6 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 
 				onSelection(optionClicked);
 			}
-	}
-	@Subscribe
-	public void onWidgetLoaded(WidgetLoaded event){
-
 	}
 	private String pendingChatMessage;
 	private String pendingPanelText;
