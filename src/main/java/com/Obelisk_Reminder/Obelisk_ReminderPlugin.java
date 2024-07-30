@@ -39,9 +39,6 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	public static int currentObeliskWildernessLevel;
 
 	public static String panelText = "Current target: unknown";
-	public static String debugText = "debug";
-	public static String debugText2 = "debug2";
-	public static String debugText3 ="debug3";
 	public static boolean isWidgetOpen = false;
 
 	@Inject
@@ -145,7 +142,6 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	public void keyPressed(KeyEvent e) {
 		if (isWidgetOpen) {
 			int keyCode = e.getKeyCode();
-			debugText = "Key Code: " + keyCode;
 
 			switch (keyCode) {
 				case KeyEvent.VK_1: {
@@ -214,7 +210,6 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 				else return;
 
 				onSelection(optionClicked);
-				debugText2 = ""+optionClicked;
 			}
 	}
 	@Subscribe
@@ -228,7 +223,6 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 		String overlayMessage;
 		switch (sel){
 			case 1:
-				debugText3= "from onSelection Function, case 1 Obelisk 13";
 				chatMessage = "Obelisk 13";
 				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_13;
 				currentObeliskWildernessLevel = 13;
