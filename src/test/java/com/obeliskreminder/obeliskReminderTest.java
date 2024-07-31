@@ -1,13 +1,13 @@
-package com.Obelisk_Reminder;
+package com.obeliskreminder;
 
 import net.runelite.client.RuneLite;
 import net.runelite.client.externalplugins.ExternalPluginManager;
 
-public class Obelisk_ReminderTest
+public class obeliskReminderTest
 {
 	public static void main(String[] args) throws Exception
 	{
-		ExternalPluginManager.loadBuiltin(Obelisk_ReminderPlugin.class);
+		ExternalPluginManager.loadBuiltin(obeliskReminderPlugin.class);
 		RuneLite.main(args);
 	}
 }

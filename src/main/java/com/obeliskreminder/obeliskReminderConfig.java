@@ -1,4 +1,4 @@
-package com.Obelisk_Reminder;
+package com.obeliskreminder;
 
 import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;
@@ -8,7 +8,7 @@ import net.runelite.client.config.ConfigItem;
 import java.awt.*;
 
 @ConfigGroup("Obelisk_Reminder")
-public interface Obelisk_ReminderConfig extends Config
+public interface obeliskReminderConfig extends Config
 {
 	@Alpha
 	@ConfigItem(

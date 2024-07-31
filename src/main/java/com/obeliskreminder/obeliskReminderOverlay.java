@@ -1,4 +1,4 @@
-package com.Obelisk_Reminder;
+package com.obeliskreminder;
 
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.OverlayPanel;
@@ -9,13 +9,13 @@ import javax.inject.Inject;
 import java.awt.*;
 
 
-class Obelisk_ReminderOverlay extends OverlayPanel
+class obeliskReminderOverlay extends OverlayPanel
 {
     private final Client client;
-    private final Obelisk_ReminderConfig config;
+    private final obeliskReminderConfig config;
 
     @Inject
-    private Obelisk_ReminderOverlay(Client client, Obelisk_ReminderConfig config)
+    private obeliskReminderOverlay(Client client, obeliskReminderConfig config)
     {
         this.client = client;
         this.config = config;
@@ -29,10 +29,10 @@ class Obelisk_ReminderOverlay extends OverlayPanel
     public Dimension render(Graphics2D graphics)
     {
         panelComponent.getChildren().clear();
-        if (Obelisk_ReminderPlugin.obeliskInRange) {
-            panelComponent.getChildren().add(LineComponent.builder().left(Obelisk_ReminderPlugin.panelText).build());
+        if (obeliskReminderPlugin.obeliskInRange) {
+            panelComponent.getChildren().add(LineComponent.builder().left(obeliskReminderPlugin.panelText).build());
             if (config.shouldFlash()) {
-                if (Obelisk_ReminderPlugin.warningActive){
+                if (obeliskReminderPlugin.warningActive){
                     if (client.getGameCycle() % 40 >= 20) {
                         panelComponent.setBackgroundColor(config.flashColor1());
                     }

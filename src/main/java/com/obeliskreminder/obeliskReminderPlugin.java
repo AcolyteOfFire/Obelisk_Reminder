@@ -1,4 +1,4 @@
-package com.Obelisk_Reminder;
+package com.obeliskreminder;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 @PluginDescriptor(
 	name = "Obelisk Reminder"
 )
-public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.KeyListener
+public class obeliskReminderPlugin extends Plugin implements java.awt.event.KeyListener
 {
 	public static boolean obeliskInRange = false;
 	public static boolean warningActive = false;
@@ -36,7 +36,7 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	@Inject
 	private Client client;
 	@Inject
-	private Obelisk_ReminderConfig config;
+	private obeliskReminderConfig config;
 	@Inject
 	private OverlayManager overlayManager;
 
@@ -51,7 +51,8 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	private static final int POH_OBELISK = 31554;
 	private static int keyLockout = -1;
 
-	@Inject Obelisk_ReminderOverlay overlay;
+	@Inject
+	obeliskReminderOverlay overlay;
 
 	@Override
 	protected void startUp() throws Exception
@@ -272,9 +273,9 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	}
 
 	@Provides
-	Obelisk_ReminderConfig provideConfig(ConfigManager configManager)
+	obeliskReminderConfig provideConfig(ConfigManager configManager)
 	{
-		return configManager.getConfig(Obelisk_ReminderConfig.class);
+		return configManager.getConfig(obeliskReminderConfig.class);
 	}
 
 }
