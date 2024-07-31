@@ -43,7 +43,7 @@ public interface Obelisk_ReminderConfig extends Config
 			description = "Displays obelisk information when obelisks are in this range",
 			name = "Obelisk Detection Range"
 	)
-	default int obeliskDetectionRange() {return 8;}
+	default int obeliskDetectionRange() {return 10;}
 	@Alpha
 	@ConfigItem(
 			keyName = "flashColor1",

@@ -25,7 +25,6 @@ import java.util.regex.Pattern;
 public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.KeyListener
 {
 	public static boolean obeliskInRange = false;
-	public static boolean POHObeliskInRange = false;
 	public static boolean warningActive = false;
 
 	public static int currentObeliskID;
@@ -50,6 +49,7 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	private static final int WILDERNESS_OBELISK_OBJECT_ID_LVL_50 = 14831;
 	private static final int WILDERNESS_OBELISK_ACTIVE_OBJECT_ID = 14825;
 	private static final int POH_OBELISK = 31554;
+	private static int keyLockout = -1;
 
 	@Inject Obelisk_ReminderOverlay overlay;
 
@@ -129,16 +129,8 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 				}
 			}
 		}
-		if (pendingChatMessage != null) {
-			client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", pendingChatMessage, "");
-			pendingChatMessage = null;  // Clear after sending
-		}
-		if (pendingPanelText != null) {
-			panelText=pendingPanelText;
-			pendingChatMessage = null;  // Clear after sending
-		}
-	}
 
+	}
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if (isWidgetOpen) {
@@ -191,6 +183,28 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 		else{
 			isWidgetOpen = false;
 		}
+		//locks out extra keypresses from changing plugin display
+		if (keyLockout == -1) {
+
+			if (pendingChatMessage != null) {
+				keyLockout = client.getTickCount();
+				client.addChatMessage(ChatMessageType.GAMEMESSAGE, "", pendingChatMessage, "");
+				currentObeliskID = pendingObeliskID;
+				currentObeliskWildernessLevel = pendingWildernessLevel;
+				pendingChatMessage = null;  // Clear after sending
+			}
+			if (pendingPanelText != null) {
+				panelText = pendingPanelText;
+				pendingPanelText = null;  // Clear after sending
+			}
+		}
+		else if(client.getTickCount()>keyLockout+1){
+			keyLockout = -1;
+			pendingChatMessage = null;
+			pendingPanelText = null;
+			pendingObeliskID = -1;
+			pendingWildernessLevel = -1;
+		}
 
 	}
 
@@ -213,39 +227,41 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	}
 	private String pendingChatMessage;
 	private String pendingPanelText;
+	private int pendingObeliskID = -1;
+	private int pendingWildernessLevel = -1;
 	private void onSelection(int sel){
 		String chatMessage;
 		String overlayMessage;
 		switch (sel){
 			case 1:
 				chatMessage = "Obelisk 13";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_13;
-				currentObeliskWildernessLevel = 13;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_13;
+				pendingWildernessLevel = 13;
 				break;
 			case 2:
 				chatMessage = "Obelisk 19";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_19;
-				currentObeliskWildernessLevel = 19;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_19;
+				pendingWildernessLevel = 19;
 				break;
 			case 3:
 				chatMessage = "Obelisk 27";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_27;
-				currentObeliskWildernessLevel = 27;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_27;
+				pendingWildernessLevel = 27;
 				break;
 			case 4:
 				chatMessage = "Obelisk 35";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_35;
-				currentObeliskWildernessLevel = 35;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_35;
+				pendingWildernessLevel = 35;
 				break;
 			case 5:
 				chatMessage = "Obelisk 44";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_44;
-				currentObeliskWildernessLevel = 44;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_44;
+				pendingWildernessLevel = 44;
 				break;
 			case 6:
 				chatMessage = "Obelisk 50";
-				currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_50;
-				currentObeliskWildernessLevel = 50;
+				pendingObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_50;
+				pendingWildernessLevel = 50;
 				break;
 			default: {
 				return;
