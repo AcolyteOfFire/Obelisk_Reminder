@@ -16,8 +16,6 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Slf4j
@@ -27,12 +25,13 @@ import java.util.regex.Pattern;
 public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.KeyListener
 {
 	public static boolean obeliskInRange = false;
+	public static boolean POHObeliskInRange = false;
 	public static boolean warningActive = false;
 
 	public static int currentObeliskID;
 	public static int currentObeliskWildernessLevel;
 
-	public static String panelText = "Current target: unknown";
+	public static String panelText = "Current Obelisk target: unknown";
 	public static boolean isWidgetOpen = false;
 
 	@Inject
@@ -49,7 +48,8 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	private static final int WILDERNESS_OBELISK_OBJECT_ID_LVL_35 = 14828;
 	private static final int WILDERNESS_OBELISK_OBJECT_ID_LVL_44 = 14826;
 	private static final int WILDERNESS_OBELISK_OBJECT_ID_LVL_50 = 14831;
-	private final Map<Integer,String> previousWidgetStates = new HashMap<>();
+	private static final int WILDERNESS_OBELISK_ACTIVE_OBJECT_ID = 14825;
+	private static final int POH_OBELISK = 31554;
 
 	@Inject Obelisk_ReminderOverlay overlay;
 
@@ -75,6 +75,8 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 	}
 	@Subscribe
 	public void onGameTick(GameTick event){
+		obeliskInRange = false;
+		warningActive = false;
 		WorldPoint playerLocation = client.getLocalPlayer().getWorldLocation();
 		for (Tile[][] tileArray : client.getScene().getTiles())
 		{
@@ -99,7 +101,9 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_27||
 								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_35||
 								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_44||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_50)
+								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_50||
+								gameObject.getId()==WILDERNESS_OBELISK_ACTIVE_OBJECT_ID||
+								gameObject.getId()==POH_OBELISK)
 						{
 							WorldPoint objectLocation = gameObject.getWorldLocation();
 							int distance = playerLocation.distanceTo(objectLocation);
@@ -113,10 +117,13 @@ public class Obelisk_ReminderPlugin extends Plugin implements java.awt.event.Key
 										warningActive = false;
 									}
 								}
-								else warningActive = false;
+								if(gameObject.getId() == POH_OBELISK){
+									if(distance<=3){
+										obeliskInRange = true;
+									}
+									else obeliskInRange = false;
+								}
 							}
-							else obeliskInRange = false;
-
 						}
 					}
 				}
