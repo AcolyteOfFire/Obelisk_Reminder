@@ -1,4 +1,4 @@
-package com.obeliskreminder;
+package com.obeliskReminder;
 
 import net.runelite.client.config.Alpha;
 import net.runelite.client.config.Config;

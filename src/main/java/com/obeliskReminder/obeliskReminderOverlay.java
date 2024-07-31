@@ -1,4 +1,4 @@
-package com.obeliskreminder;
+package com.obeliskReminder;
 
 import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.OverlayPanel;
