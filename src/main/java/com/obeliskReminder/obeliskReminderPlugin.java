@@ -5,7 +5,6 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.ClientTick;
 import net.runelite.api.events.MenuOptionClicked;
@@ -13,16 +12,18 @@ import net.runelite.api.widgets.Widget;
 import java.awt.event.KeyEvent;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.input.KeyListener;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.input.KeyManager;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Slf4j
 @PluginDescriptor(
 	name = "Obelisk Reminder"
 )
-public class obeliskReminderPlugin extends Plugin implements java.awt.event.KeyListener
+public class obeliskReminderPlugin extends Plugin implements KeyListener
 {
 	public static boolean obeliskInRange = false;
 	public static boolean warningActive = false;
@@ -39,6 +40,8 @@ public class obeliskReminderPlugin extends Plugin implements java.awt.event.KeyL
 	private obeliskReminderConfig config;
 	@Inject
 	private OverlayManager overlayManager;
+	@Inject
+	private KeyManager keyManager;
 
 	private static final int WILDERNESS_OBELISK_WIDGET_ID = 12255235;
 	private static final int WILDERNESS_OBELISK_OBJECT_ID_LVL_13 = 14829;
@@ -57,23 +60,17 @@ public class obeliskReminderPlugin extends Plugin implements java.awt.event.KeyL
 	@Override
 	protected void startUp() throws Exception
 	{
-		client.getCanvas().addKeyListener(this);
+		overlayManager.add(overlay);
+		keyManager.registerKeyListener(this);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		client.getCanvas().removeKeyListener(this);
+		overlayManager.remove(overlay);
+		keyManager.unregisterKeyListener(this);
 	}
 
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged gameStateChanged)
-	{
-		if (gameStateChanged.getGameState() == GameState.LOGGED_IN)
-		{
-			overlayManager.add(overlay);
-		}
-	}
 	@Subscribe
 	public void onGameTick(GameTick event){
 		obeliskInRange = false;
