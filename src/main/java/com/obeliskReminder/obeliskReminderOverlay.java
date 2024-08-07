@@ -20,9 +20,6 @@ class obeliskReminderOverlay extends OverlayPanel
         this.client = client;
         this.config = config;
         setPosition(OverlayPosition.BOTTOM_RIGHT);
-        isMovable();
-        isResizable();
-        isResettable();
     }
 
     @Override

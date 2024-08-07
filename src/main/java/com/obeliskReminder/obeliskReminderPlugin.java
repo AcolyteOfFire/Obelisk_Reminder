@@ -5,12 +5,16 @@ import javax.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.GameTick;
+import net.runelite.api.events.GameObjectSpawned;
+import net.runelite.api.events.GameObjectDespawned;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import java.util.Arrays;
 
 @Slf4j
 @PluginDescriptor(
@@ -41,6 +45,10 @@ public class obeliskReminderPlugin extends Plugin
 	private static final int POH_OBELISK = 31554;
 	private int prevVarbit = -1;
 
+	private boolean obeliskIsSpawned = false;
+
+	private int allObelisks[]= new int[]{WILDERNESS_OBELISK_OBJECT_ID_LVL_13,WILDERNESS_OBELISK_OBJECT_ID_LVL_19,WILDERNESS_OBELISK_OBJECT_ID_LVL_27,WILDERNESS_OBELISK_OBJECT_ID_LVL_35,WILDERNESS_OBELISK_OBJECT_ID_LVL_44,WILDERNESS_OBELISK_OBJECT_ID_LVL_50,POH_OBELISK, WILDERNESS_OBELISK_ACTIVE_OBJECT_ID};
+
 	@Inject
 	obeliskReminderOverlay overlay;
 
@@ -58,6 +66,9 @@ public class obeliskReminderPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick event){
+		if(!obeliskIsSpawned){
+			return;
+		}
 		int selectedObelisk = client.getVarbitValue(4966);
 		obeliskInRange = false;
 		warningActive = false;
@@ -80,14 +91,7 @@ public class obeliskReminderPlugin extends Plugin
 							continue;
 						}
 
-						if (gameObject.getId() == WILDERNESS_OBELISK_OBJECT_ID_LVL_13 ||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_19||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_27||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_35||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_44||
-								gameObject.getId()==WILDERNESS_OBELISK_OBJECT_ID_LVL_50||
-								gameObject.getId()==WILDERNESS_OBELISK_ACTIVE_OBJECT_ID||
-								gameObject.getId()==POH_OBELISK)
+						if (Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId()))
 						{
 							WorldPoint objectLocation = gameObject.getWorldLocation();
 							int distance = playerLocation.distanceTo(objectLocation);
@@ -159,6 +163,27 @@ public class obeliskReminderPlugin extends Plugin
 			}
 		}
 
+	}
+
+	@Subscribe
+	public void onGameObjectSpawned(GameObjectSpawned event){
+		GameObject gameObject = event.getGameObject();
+		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
+			obeliskIsSpawned = true;
+		}
+	}
+	@Subscribe
+	public void onGameObjectDespawned(GameObjectDespawned event){
+		GameObject gameObject = event.getGameObject();
+		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
+			obeliskIsSpawned = false;
+		}
+	}
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event){
+		if(event.getGameState().equals(GameState.LOADING)){
+			obeliskIsSpawned = false;
+		}
 	}
 
 	@Provides
