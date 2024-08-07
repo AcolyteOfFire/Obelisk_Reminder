@@ -14,7 +14,11 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @PluginDescriptor(
@@ -44,8 +48,7 @@ public class obeliskReminderPlugin extends Plugin
 	private static final int WILDERNESS_OBELISK_ACTIVE_OBJECT_ID = 14825;
 	private static final int POH_OBELISK = 31554;
 	private int prevVarbit = -1;
-
-	private boolean obeliskIsSpawned = false;
+	private List<GameObject> obelisks = new ArrayList<GameObject>();
 
 	private int allObelisks[]= new int[]{WILDERNESS_OBELISK_OBJECT_ID_LVL_13,WILDERNESS_OBELISK_OBJECT_ID_LVL_19,WILDERNESS_OBELISK_OBJECT_ID_LVL_27,WILDERNESS_OBELISK_OBJECT_ID_LVL_35,WILDERNESS_OBELISK_OBJECT_ID_LVL_44,WILDERNESS_OBELISK_OBJECT_ID_LVL_50,POH_OBELISK, WILDERNESS_OBELISK_ACTIVE_OBJECT_ID};
 
@@ -66,102 +69,81 @@ public class obeliskReminderPlugin extends Plugin
 
 	@Subscribe
 	public void onGameTick(GameTick event){
-		if(!obeliskIsSpawned){
-			return;
-		}
+		if(obelisks.isEmpty()) return;
 		int selectedObelisk = client.getVarbitValue(4966);
 		obeliskInRange = false;
 		warningActive = false;
 		WorldPoint playerLocation = client.getLocalPlayer().getWorldLocation();
-		for (Tile[][] tileArray : client.getScene().getTiles())
-		{
-			for (Tile[] tileRow : tileArray)
+		for(GameObject obelisk : obelisks){
+			if (Arrays.stream(allObelisks).anyMatch(x -> x == obelisk.getId()))
 			{
-				for (Tile tile : tileRow)
+				WorldPoint objectLocation = obelisk.getWorldLocation();
+				int distance = playerLocation.distanceTo(objectLocation);
+				if(distance <= config.obeliskDetectionRange())
 				{
-					if (tile == null)
-					{
-						continue;
+					obeliskInRange = true;
+					String chatMessage;
+					String overlayMessage;
+					switch (selectedObelisk){
+						case 4:
+							chatMessage = "Obelisk 13";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_13;
+							currentObeliskWildernessLevel = 13;
+							break;
+						case 5:
+							chatMessage = "Obelisk 19";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_19;
+							currentObeliskWildernessLevel = 19;
+							break;
+						case 2:
+							chatMessage = "Obelisk 27";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_27;
+							currentObeliskWildernessLevel = 27;
+							break;
+						case 3:
+							chatMessage = "Obelisk 35";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_35;
+							currentObeliskWildernessLevel = 35;
+							break;
+						case 1:
+							chatMessage = "Obelisk 44";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_44;
+							currentObeliskWildernessLevel = 44;
+							break;
+						case 6:
+							chatMessage = "Obelisk 50";
+							currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_50;
+							currentObeliskWildernessLevel = 50;
+							break;
+						default: {
+							chatMessage = "None";
+							return;
+						}
 					}
 
-					for (GameObject gameObject : tile.getGameObjects())
-					{
-						if (gameObject == null)
-						{
-							continue;
+					overlayMessage = "Target Obelisk: " + chatMessage;
+					panelText = overlayMessage;
+					if(prevVarbit != selectedObelisk){
+						client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","Selected: " + chatMessage,"");
+						prevVarbit = selectedObelisk;
+					}
+					if(obelisk.getId()==currentObeliskID){
+						warningActive = true;
+						if(currentObeliskWildernessLevel<config.flashAtWildernessLevel()){
+							warningActive = false;
 						}
-
-						if (Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId()))
-						{
-							WorldPoint objectLocation = gameObject.getWorldLocation();
-							int distance = playerLocation.distanceTo(objectLocation);
-
-							if(distance <= config.obeliskDetectionRange())
-							{
-								obeliskInRange = true;
-								String chatMessage;
-								String overlayMessage;
-								switch (selectedObelisk){
-									case 4:
-										chatMessage = "Obelisk 13";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_13;
-										currentObeliskWildernessLevel = 13;
-										break;
-									case 5:
-										chatMessage = "Obelisk 19";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_19;
-										currentObeliskWildernessLevel = 19;
-										break;
-									case 2:
-										chatMessage = "Obelisk 27";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_27;
-										currentObeliskWildernessLevel = 27;
-										break;
-									case 3:
-										chatMessage = "Obelisk 35";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_35;
-										currentObeliskWildernessLevel = 35;
-										break;
-									case 1:
-										chatMessage = "Obelisk 44";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_44;
-										currentObeliskWildernessLevel = 44;
-										break;
-									case 6:
-										chatMessage = "Obelisk 50";
-										currentObeliskID = WILDERNESS_OBELISK_OBJECT_ID_LVL_50;
-										currentObeliskWildernessLevel = 50;
-										break;
-									default: {
-										chatMessage = "None";
-										return;
-									}
-								}
-
-								overlayMessage = "Target Obelisk: " + chatMessage;
-								panelText = overlayMessage;
-								if(prevVarbit != selectedObelisk){
-									client.addChatMessage(ChatMessageType.GAMEMESSAGE,"","Selected: " + chatMessage,"");
-									prevVarbit = selectedObelisk;
-								}
-								if(gameObject.getId()==currentObeliskID){
-									warningActive = true;
-									if(currentObeliskWildernessLevel<config.flashAtWildernessLevel()){
-										warningActive = false;
-									}
-								}
-								if(gameObject.getId() == POH_OBELISK){
-									if(distance<=3){
-										obeliskInRange = true;
-									}
-									else obeliskInRange = false;
-								}
-							}
+					}
+					if(obelisk.getId() == POH_OBELISK){
+						if(distance<=3){
+							obeliskInRange = true;
 						}
+						else obeliskInRange = false;
 					}
 				}
+
 			}
-		}
+
+	}
 
 	}
 
@@ -169,20 +151,20 @@ public class obeliskReminderPlugin extends Plugin
 	public void onGameObjectSpawned(GameObjectSpawned event){
 		GameObject gameObject = event.getGameObject();
 		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
-			obeliskIsSpawned = true;
+			obelisks.add(gameObject);
 		}
 	}
 	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned event){
 		GameObject gameObject = event.getGameObject();
 		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
-			obeliskIsSpawned = false;
+			obelisks.remove(gameObject);
 		}
 	}
 	@Subscribe
 	public void onGameStateChanged(GameStateChanged event){
 		if(event.getGameState().equals(GameState.LOADING)){
-			obeliskIsSpawned = false;
+			obelisks.clear();
 		}
 	}
 
