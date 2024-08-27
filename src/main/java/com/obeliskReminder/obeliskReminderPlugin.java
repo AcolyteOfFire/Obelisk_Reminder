@@ -65,6 +65,7 @@ public class obeliskReminderPlugin extends Plugin
 	protected void shutDown() throws Exception
 	{
 		overlayManager.remove(overlay);
+		obelisks.clear();
 	}
 
 	@Subscribe
