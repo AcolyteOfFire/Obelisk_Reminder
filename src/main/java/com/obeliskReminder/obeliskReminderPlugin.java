@@ -50,8 +50,6 @@ public class obeliskReminderPlugin extends Plugin
 	private int prevVarbit = -1;
 	private List<GameObject> obelisks = new ArrayList<GameObject>();
 
-	private int allObelisks[]= new int[]{WILDERNESS_OBELISK_OBJECT_ID_LVL_13,WILDERNESS_OBELISK_OBJECT_ID_LVL_19,WILDERNESS_OBELISK_OBJECT_ID_LVL_27,WILDERNESS_OBELISK_OBJECT_ID_LVL_35,WILDERNESS_OBELISK_OBJECT_ID_LVL_44,WILDERNESS_OBELISK_OBJECT_ID_LVL_50,POH_OBELISK, WILDERNESS_OBELISK_ACTIVE_OBJECT_ID};
-
 	@Inject
 	obeliskReminderOverlay overlay;
 
@@ -76,7 +74,7 @@ public class obeliskReminderPlugin extends Plugin
 		warningActive = false;
 		WorldPoint playerLocation = client.getLocalPlayer().getWorldLocation();
 		for(GameObject obelisk : obelisks){
-			if (Arrays.stream(allObelisks).anyMatch(x -> x == obelisk.getId()))
+			if (isObelisk(obelisk.getId()))
 			{
 				WorldPoint objectLocation = obelisk.getWorldLocation();
 				int distance = playerLocation.distanceTo(objectLocation);
@@ -151,14 +149,14 @@ public class obeliskReminderPlugin extends Plugin
 	@Subscribe
 	public void onGameObjectSpawned(GameObjectSpawned event){
 		GameObject gameObject = event.getGameObject();
-		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
+		if (isObelisk(gameObject.getId())) {
 			obelisks.add(gameObject);
 		}
 	}
 	@Subscribe
 	public void onGameObjectDespawned(GameObjectDespawned event){
 		GameObject gameObject = event.getGameObject();
-		if(Arrays.stream(allObelisks).anyMatch(x -> x == gameObject.getId())){
+		if (isObelisk(gameObject.getId())) {
 			obelisks.remove(gameObject);
 		}
 	}
@@ -173,6 +171,10 @@ public class obeliskReminderPlugin extends Plugin
 	obeliskReminderConfig provideConfig(ConfigManager configManager)
 	{
 		return configManager.getConfig(obeliskReminderConfig.class);
+	}
+
+	private boolean isObelisk(int objectId) {
+		return (objectId >= WILDERNESS_OBELISK_ACTIVE_OBJECT_ID && objectId <= WILDERNESS_OBELISK_OBJECT_ID_LVL_50) || objectId == POH_OBELISK;
 	}
 
 }
